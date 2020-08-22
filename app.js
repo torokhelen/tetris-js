@@ -1,6 +1,7 @@
 const GRID_WIDTH = 10
 
 document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.querySelector('.grid');
     let squares = Array.from(document.querySelectorAll('.grid div'));
     console.log(squares);
     const scoreDisplay = document.querySelector('#score');
@@ -113,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // freezing
   function freeze() {
     if(current.some(index => squares[currentPosition + index + GRID_WIDTH].classList.contains('taken'))) {
-      current.forEach( index => squares[currentPosition + index + GRID_WIDTH].classList.add('taken'))
+      current.forEach( index => squares[currentPosition + index].classList.add('taken'))
       // start a new tetromino falling
 
       random = nextRandom;
@@ -123,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       draw();
       displayShape();
       addScore();
+      gameOver();
     }
   }
 
@@ -216,11 +218,21 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreDisplay.innerHTML = score;
         row.forEach( index => {
           squares[index].classList.remove('taken');
+          squares[index].classList.remove('tetromino');
         })
 
         const squaresRemoved = squares.splice(i, GRID_WIDTH);
-        console.log(squaresRemoved);
+        //console.log(squaresRemoved);
+        squares = squaresRemoved.concat(squares);
+        squares.forEach(cell => grid.appendChild(cell));
       }
+    }
+  }
+
+  function gameOver() {
+    if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+      scoreDisplay.innerHTML = 'end';
+      clearInterval(timerId);
     }
   }
 
